@@ -62,7 +62,6 @@ import gitLogo from './assets/git.webp';
 import nextLogo from './assets/next.webp';
 import nestLogo from './assets/nest.webp';
 import './App.css';
-import MobileNavigation from './components/MobileNavigation';
 
 const App = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -499,16 +498,54 @@ const App = () => {
               </Button>
             </div>
 
-            <MobileNavigation
-              navItems={navItems}
-              scrollToSection={scrollToSection}
-              activeSection={activeSection}
-              isDarkMode={isDarkMode}
-              toggleDarkMode={toggleDarkMode}
-            />
+            <div className="md:hidden flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleDarkMode}
+              >
+                {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="relative z-50"
+                aria-label="Toggle mobile menu"
+              >
+                {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              </Button>
+            </div>
           </div>
         </div>
 
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden bg-background border-t border-border relative z-40"
+            >
+              <div className="px-2 pt-2 pb-3 space-y-1">
+                {navItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => scrollToSection(item.id)}
+                    className={`block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-colors ${
+                      activeSection === item.id
+                        ? 'text-primary bg-accent'
+                        : 'text-muted-foreground hover:text-primary hover:bg-accent/50'
+                    }`}
+                  >
+                    <item.icon className="inline-block w-4 h-4 mr-2" />
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       <section id="hero" className="min-h-screen flex items-center justify-center pt-24 pb-16">
